@@ -48,8 +48,9 @@ impl<I2C, CommE> NCP5623C<I2C>
         // Turn off the LED current
         self.set_register_bits(IREG_SHUTDOWN, 0)
     }
-    
-    pub fn set_current(&mut self, current: u8)  -> Result<(), Error<CommE>> {
+
+    /// You can use BRIGHTNESS_xxx constants here
+    pub fn set_brightness(&mut self, current: u8) -> Result<(), Error<CommE>> {
         self.set_register_bits( IREG_LED_CURRENT,  current)
     }
 
@@ -76,7 +77,6 @@ impl<I2C, CommE> NCP5623C<I2C>
             IREG_PWM2 | (green & IREG_VAL_MASK),
             IREG_DIM_STEP_RUN,
             IREG_PWM3 | (blue & IREG_VAL_MASK),
-            IREG_DIM_STEP_RUN,
         ];
 
         self.i2c_port
@@ -90,8 +90,11 @@ const DEFAULT_I2C_ADDRESS: u8 = 0x39;
 const IREG_VAL_MASK: u8 = 0x1f;
 const IREG_REG_MASK: u8 = 0xe0;
 
-/// The maximum allowable LED current
-pub const LED_MAX_CURRENT: u8 = 0x1f;
+/// Constants for brightness
+pub const BRIGHTNESS_MAX: u8 = 0x1f;
+pub const BRIGHTNESS_HALF: u8 = 0x18;
+pub const BRIGHTNESS_LOW: u8 = 0x0f;
+pub const BRIGHTNESS_OFF: u8 = 0x00;
 
 /// Internal register bits
 pub const IREG_SHUTDOWN: u8 = 0x00;
@@ -102,4 +105,5 @@ pub const IREG_PWM3: u8 = 0x80;
 pub const IREG_UPWARD_LEND: u8 = 0xA0;
 pub const IREG_DOWNWARD_LEND: u8 = 0xC0;
 pub const IREG_DIM_STEP_RUN: u8 = 0xE0;
+
 
