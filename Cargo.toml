@@ -1,0 +1,23 @@
+[package]
+name = "ncp5623c"
+version = "0.1.0"
+authors = ["Todd Stellanova <tstellanova@users.noreply.github.com>"]
+edition = "2018"
+description = "NCP5623C RGB LED driver for embedded hal"
+license = "BSD-3-Clause"
+repository = "https://github.com/tstellanova/ncp5623c"
+categories = [
+    "embedded",
+    "hardware-support",
+    "no-std",
+]
+keywords = [
+    "embedded-hal-driver",
+    "NCP5623C",
+    "rgbled"
+]
+readme = "README.md"
+
+[dependencies]
+embedded-hal = { version = "0.2.3", features = ["unproven"] }
+
