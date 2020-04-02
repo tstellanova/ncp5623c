@@ -48,12 +48,7 @@ impl<I2C, CommE> NCP5623C<I2C>
         // Turn off the LED current
         self.set_register_bits(IREG_SHUTDOWN, 0)
     }
-
-    // /// Put the device into an idle pulsing mode
-    // pub fn idle_sweep(&mut self) -> Result<(), Error<CommE>> {
-    //
-    // }
-
+    
     pub fn set_current(&mut self, current: u8)  -> Result<(), Error<CommE>> {
         self.set_register_bits( IREG_LED_CURRENT,  current)
     }
@@ -62,7 +57,7 @@ impl<I2C, CommE> NCP5623C<I2C>
     /// See datasheet "Internal Register Selection" and "Table 1. Internal Register Bits Assigment"
     pub fn set_register_bits(&mut self, reg: u8, val: u8)  -> Result<(), Error<CommE>> {
         // ensure that register and value are masked to top 3 and lower 5 bits, respectively
-        let write_buf = [(reg & 0x70) | (val & 0x1f)];
+        let write_buf = [(reg & IREG_REG_MASK) | (val & IREG_VAL_MASK)];
         self.i2c_port
             .write(self.address, &write_buf)
             .map_err(Error::Comm)?;
@@ -74,14 +69,14 @@ impl<I2C, CommE> NCP5623C<I2C>
         -> Result<(), Error<CommE>> {
         // register values are masked to the lower 5 bits
         let write_buf = [
-            IREG_LED_CURRENT | (bright & 0x1f),
-            //IREG_DIM_STEP_RUN,
-            IREG_PWM1 | (red & 0x1f),
-            //IREG_DIM_STEP_RUN,
-            IREG_PWM2 | (green & 0x1f),
-            //IREG_DIM_STEP_RUN,
-            IREG_PWM3 | (blue & 0x1f),
-            //IREG_DIM_STEP_RUN,
+            IREG_LED_CURRENT | (bright & IREG_VAL_MASK),
+            IREG_DIM_STEP_RUN,
+            IREG_PWM1 | (red & IREG_VAL_MASK),
+            IREG_DIM_STEP_RUN,
+            IREG_PWM2 | (green & IREG_VAL_MASK),
+            IREG_DIM_STEP_RUN,
+            IREG_PWM3 | (blue & IREG_VAL_MASK),
+            IREG_DIM_STEP_RUN,
         ];
 
         self.i2c_port
@@ -92,6 +87,8 @@ impl<I2C, CommE> NCP5623C<I2C>
 }
 
 const DEFAULT_I2C_ADDRESS: u8 = 0x39;
+const IREG_VAL_MASK: u8 = 0x1f;
+const IREG_REG_MASK: u8 = 0xe0;
 
 /// The maximum allowable LED current
 pub const LED_MAX_CURRENT: u8 = 0x1f;
